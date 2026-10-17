@@ -6,6 +6,12 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+// 
+// Health check — ping this from a free uptime monitor to stop Render's
+// free tier from putting the server to sleep after 15 min of no traffic
+app.get('/api/health', (req, res) => res.json({ ok: true }));
+// 
 import authRoutes from './routes/auth.js';
 import galleryRoutes from './routes/gallery.js';
 
