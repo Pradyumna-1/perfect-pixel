@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGallery } from '../context/GalleryContext';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { Trash2, LogOut, Plus, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Trash2, LogOut, Plus, AlertCircle, CheckCircle2, X, Bell } from 'lucide-react';
 
 const Admin = () => {
     const { mediaItems, addMedia, deleteMedia } = useGallery();
@@ -47,7 +47,7 @@ const Admin = () => {
             setTitle('');
             setDescription('');
             showToast('Media uploaded successfully!');
-        } catch (error) {
+        } catch {
             showToast('Failed to add media', 'alert');
         } finally {
             setLoading(false);
@@ -60,7 +60,7 @@ const Admin = () => {
         try {
             await deleteMedia(itemToDelete);
             showToast('Item deleted successfully!');
-        } catch (error) {
+        } catch {
             showToast('Failed to delete media', 'alert');
         } finally {
             setLoading(false);
@@ -76,14 +76,22 @@ const Admin = () => {
     return (
         <div className="min-h-screen bg-gray-900 text-white p-8">
             <div className="max-w-6xl mx-auto">
-                <div className="flex justify-between items-center mb-8">
+                <div className="flex flex-wrap gap-4 justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors"
-                    >
-                        <LogOut size={20} /> Logout
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            to="/admin/notifications"
+                            className="flex items-center gap-2 bg-accent hover:bg-accent/80 px-4 py-2 rounded transition-colors font-semibold"
+                        >
+                            <Bell size={20} /> Manage Notifications
+                        </Link>
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors"
+                        >
+                            <LogOut size={20} /> Logout
+                        </button>
+                    </div>
                 </div>
 
                 {/* Add Media Form */}

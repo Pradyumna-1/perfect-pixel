@@ -14,6 +14,7 @@ app.get('/api/health', (req, res) => res.json({ ok: true }));
 // 
 import authRoutes from './routes/auth.js';
 import galleryRoutes from './routes/gallery.js';
+import notificationRoutes, { ensureNotificationSchema } from './routes/notifications.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,6 +37,7 @@ app.use('/uploads', express.static('uploads'));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/gallery', galleryRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // --- PRODUCTION SETUP ---
 // (Not required for API-only deployment on Render)
@@ -55,6 +57,10 @@ app.use((err, req, res, next) => {
     console.error('Unhandled Error:', err);
     res.status(500).json({ message: 'Internal Server Error', error: err.message });
 });
+
+ensureNotificationSchema()
+    .then(() => console.log('Notification schema ready'))
+    .catch((err) => console.error('Notification schema setup failed:', err.message));
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);

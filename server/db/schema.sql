@@ -21,3 +21,21 @@ CREATE TABLE IF NOT EXISTS media (
 );
 
 CREATE INDEX IF NOT EXISTS idx_media_created_at ON media(created_at DESC);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(300) NOT NULL,
+  category VARCHAR(30) NOT NULL DEFAULT 'notice',
+  description TEXT NOT NULL DEFAULT '',
+  application_deadline DATE,
+  attachment_url TEXT,
+  attachment_public_id TEXT,
+  attachment_resource_type VARCHAR(20),
+  attachment_name VARCHAR(255),
+  is_published BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON notifications(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_notifications_category ON notifications(category);

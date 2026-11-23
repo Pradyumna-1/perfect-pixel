@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
@@ -6,6 +8,15 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        const sectionRoutes = ['/services', '/gallery', '/contact'];
+        if (!sectionRoutes.includes(pathname)) {
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+    }, [pathname]);
+
     return (
         <div className="min-h-screen bg-primary text-white font-sans">
             <Navbar />

@@ -12,9 +12,13 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Admin from './pages/Admin';
+import Notifications from './pages/Notifications';
+import NotificationDetail from './pages/NotificationDetail';
+import AdminNotifications from './pages/AdminNotifications';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { GalleryProvider } from './context/GalleryContext';
+import { NotificationProvider } from './context/NotificationContext';
 
 
 // --------------------------------------------------
@@ -55,6 +59,7 @@ function App() {
     return (
         <AuthProvider>
             <GalleryProvider>
+                <NotificationProvider>
 
                 <Router>
 
@@ -90,6 +95,39 @@ function App() {
                                 <ProtectedRoute>
                                     <Admin />
                                 </ProtectedRoute>
+                            }
+                        />
+
+
+                        <Route
+                            path="/admin/notifications"
+                            element={
+                                <ProtectedRoute>
+                                    <AdminNotifications />
+                                </ProtectedRoute>
+                            }
+                        />
+
+
+                        {/* =========================================
+                            NOTIFICATIONS
+                           ========================================= */}
+
+                        <Route
+                            path="/notifications"
+                            element={
+                                <Layout>
+                                    <Notifications />
+                                </Layout>
+                            }
+                        />
+
+                        <Route
+                            path="/notifications/:id"
+                            element={
+                                <Layout>
+                                    <NotificationDetail />
+                                </Layout>
                             }
                         />
 
@@ -171,6 +209,7 @@ function App() {
 
                 </Router>
 
+                </NotificationProvider>
             </GalleryProvider>
         </AuthProvider>
     );

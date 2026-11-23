@@ -1,5 +1,6 @@
 import Hero from '../components/Hero';
 import Services from '../components/Services';
+import NotificationsPreview from '../components/NotificationsPreview';
 import Gallery from '../components/Gallery';
 import Contact from '../components/Contact';
 import { useEffect } from 'react';
@@ -44,6 +45,7 @@ const Home = () => {
         <>
             <Hero />
             <Services />
+            <NotificationsPreview />
             <Gallery />
             <Contact />
         </>
