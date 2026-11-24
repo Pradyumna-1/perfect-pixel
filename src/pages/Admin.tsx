@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { AlertCircle, Bell, CheckCircle2, ChevronLeft, ChevronRight, LogOut, Plus, Trash2, X } from 'lucide-react';
+import { AlertCircle, Bell, ChevronLeft, ChevronRight, LogOut, Plus, Trash2 } from 'lucide-react';
 import { useGallery } from '../context/GalleryContext';
 import { useAuth } from '../context/AuthContext';
+import Toast from '../components/Toast';
 
 const inputClass = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20';
 const primaryButtonClass = 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-600 disabled:opacity-50';
@@ -30,7 +31,6 @@ const Admin = () => {
 
   const showToast = (message: string, toastType: 'success' | 'alert' = 'success') => {
     setToast({ message, type: toastType });
-    setTimeout(() => setToast(null), 3000);
   };
 
   const handleAdd = async (e: React.FormEvent) => {
@@ -312,23 +312,11 @@ const Admin = () => {
 
       <AnimatePresence>
         {toast && (
-          <motion.div
-            className={`fixed left-1/2 top-6 z-[200] flex items-center gap-3 rounded-full border px-5 py-2 text-sm text-white shadow-xl ${toast.type === 'alert' ? 'border-red-500/50 bg-slate-900' : 'border-blue-500/50 bg-slate-900'}`}
-            role="status"
-            initial={{ opacity: 0, x: '-50%', y: -12 }}
-            animate={{ opacity: 1, x: '-50%', y: 0 }}
-            exit={{ opacity: 0, x: '-50%', y: -8 }}
-          >
-            {toast.type === 'alert' ? (
-              <AlertCircle size={18} strokeWidth={2} aria-hidden="true" className="text-red-400" />
-            ) : (
-              <CheckCircle2 size={18} strokeWidth={2} aria-hidden="true" className="text-blue-400" />
-            )}
-            <span className="font-medium">{toast.message}</span>
-            <button type="button" onClick={() => setToast(null)} aria-label="Dismiss notification" className="rounded-full p-0.5 text-slate-400 hover:bg-white/10">
-              <X size={14} strokeWidth={2} aria-hidden="true" />
-            </button>
-          </motion.div>
+          <Toast
+            message={toast.message}
+            tone={toast.type}
+            onClose={() => setToast(null)}
+          />
         )}
       </AnimatePresence>
     </div>

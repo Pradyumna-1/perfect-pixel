@@ -415,3 +415,18 @@ footer a:hover {
     margin: -40px auto 0;
   }
 }
+
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.toast-progress {
+  transform-origin: left center;
+  animation: toast-progress var(--toast-duration, 4200ms) linear forwards;
+}

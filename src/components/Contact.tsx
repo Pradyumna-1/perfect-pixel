@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { PhoneCall, Mail, MapPinned, Clock3, CheckCircle, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { PhoneCall, Mail, MapPinned, Clock3 } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import Toast from './Toast';
 
 const contactIconClass = 'flex h-12 w-12 shrink-0 items-center justify-center bg-transparent';
 
@@ -12,21 +13,11 @@ const contactIconColors = [
 ];
 
 const Contact = () => {
-    const [showToast, setShowToast] = useState(false);
-
-    useEffect(() => {
-        // Check if message was just sent
-        const messageSent = sessionStorage.getItem('messageSent');
-        if (messageSent) {
-            setShowToast(true);
-            sessionStorage.removeItem('messageSent');
-            // Hide toast after 5 seconds
-            const timer = setTimeout(() => {
-                setShowToast(false);
-            }, 5000);
-            return () => clearTimeout(timer);
-        }
-    }, []);
+    const [showToast, setShowToast] = useState(() => {
+        const sent = sessionStorage.getItem('messageSent') === 'true';
+        if (sent) sessionStorage.removeItem('messageSent');
+        return sent;
+    });
 
     return (
         <section id="contact" className="py-20 bg-secondary relative overflow-hidden">
@@ -34,21 +25,13 @@ const Contact = () => {
             <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
-            {/* Elite Minimalist Toaster (Top Center) */}
             <AnimatePresence>
                 {showToast && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -50, x: '-50%' }}
-                        animate={{ opacity: 1, y: 0, x: '-50%' }}
-                        exit={{ opacity: 0, y: -20, x: '-50%' }}
-                        className="fixed top-6 left-1/2 z-[100] px-5 py-2 rounded-full shadow-2xl flex items-center gap-3 border border-blue-400/50 bg-black/80 text-white whitespace-nowrap"
-                    >
-                        <CheckCircle size={18} className="text-blue-400" />
-                        <span className="text-sm font-medium tracking-tight">Message Sent! Opening WhatsApp...</span>
-                        <button onClick={() => setShowToast(false)} className="ml-1 p-0.5 hover:bg-white/10 rounded-full transition-colors text-gray-400">
-                            <X size={14} />
-                        </button>
-                    </motion.div>
+                    <Toast
+                        message="Message Sent! Opening WhatsApp..."
+                        title="Message sent"
+                        onClose={() => setShowToast(false)}
+                    />
                 )}
             </AnimatePresence>
 
@@ -135,7 +118,6 @@ const Contact = () => {
 
                                 // Also show toast immediately in case they don't leave the tab or it opens in background
                                 setShowToast(true);
-                                setTimeout(() => setShowToast(false), 5000);
                             }}
                         >
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

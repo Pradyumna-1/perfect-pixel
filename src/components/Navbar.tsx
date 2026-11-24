@@ -10,6 +10,7 @@ import {
     Bell,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Brand from './Brand';
 
 interface NavItem {
     name: string;
@@ -54,9 +55,9 @@ const Navbar = () => {
         }`;
 
     const mobileClass = ({ isActive }: { isActive: boolean }) =>
-        `relative w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-medium transition-all duration-300 ${isActive
-            ? 'text-accent bg-white/5'
-            : 'text-gray-400 hover:text-white hover:bg-white/5'
+        `group relative flex w-full items-center overflow-hidden px-4 py-2.5 text-left text-[15px] font-semibold transition-colors duration-300 ${isActive
+            ? 'text-accent'
+            : 'text-[color:var(--color-ink)] hover:text-accent'
         }`;
 
     return (
@@ -68,12 +69,7 @@ const Navbar = () => {
                         onClick={() => handleNavClick('home')}
                         className="flex-shrink-0 flex items-center gap-2 group"
                     >
-                        <div className="w-8 h-8 rounded-lg border border-[#e11d48]/20 bg-[#1c2028] flex items-center justify-center text-[#e11d48] text-lg font-extrabold transition-transform duration-300 group-hover:scale-110">
-                            P
-                        </div>
-                        <span className="font-bold text-xl tracking-wider">
-                            <span className="text-[#e11d48]">P</span><span className="text-[#20242b]">ERFECT</span><span className="text-[#e11d48]">P</span><span className="text-[#2f7fd1]">IXEL</span>
-                        </span>
+                        <Brand />
                     </Link>
 
                     <div className="hidden md:block">
@@ -99,7 +95,7 @@ const Navbar = () => {
                         <button
                             type="button"
                             onClick={() => setIsOpen((prev) => !prev)}
-                            className="inline-flex items-center justify-center p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-300 focus:outline-none"
+                            className="inline-flex items-center justify-center rounded-xl border border-[var(--color-rule)] bg-[var(--color-light)] p-2.5 text-[color:var(--color-ink)] transition-all duration-300 hover:bg-[var(--color-paper-2)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
                             aria-label={isOpen ? 'Close menu' : 'Open menu'}
                             aria-expanded={isOpen}
                         >
@@ -137,28 +133,39 @@ const Navbar = () => {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.25, ease: 'easeInOut' }}
-                        className="md:hidden bg-[#0f172a] border-b border-white/10 overflow-hidden"
+                        transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                        className="md:hidden overflow-hidden rounded-b-2xl border-b border-[var(--color-rule)] bg-[var(--color-light)] shadow-[0_28px_50px_-30px_rgba(15,23,42,0.35)]"
                     >
-                        <div className="px-3 pt-3 pb-4 space-y-2">
-                            {navLinks.map((link, index) => (
-                                <motion.div
-                                    key={link.name}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: index * 0.05, duration: 0.25 }}
-                                >
-                                    <NavLink
-                                        to={link.path}
-                                        end={link.path !== '/notifications'}
-                                        onClick={() => handleNavClick(link.section)}
-                                        className={mobileClass}
+                        <div className="px-4 pb-3 pt-1 sm:px-6 lg:px-8">
+                            <p className="px-4 pb-2 pt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-[color:var(--color-muted)]">
+                                Explore
+                            </p>
+                            <div className="space-y-0.5">
+                                {navLinks.map((link, index) => (
+                                    <motion.div
+                                        key={link.name}
+                                        initial={{ opacity: 0, x: -16 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: index * 0.045, duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                                     >
-                                        {link.icon}
-                                        <span>{link.name}</span>
-                                    </NavLink>
-                                </motion.div>
-                            ))}
+                                        <NavLink
+                                            to={link.path}
+                                            end={link.path !== '/notifications'}
+                                            onClick={() => handleNavClick(link.section)}
+                                            className={mobileClass}
+                                        >
+                                            {({ isActive }) => (
+                                                <>
+                                                    {isActive && (
+                                                        <span className="absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-full bg-accent" aria-hidden="true" />
+                                                    )}
+                                                    <span className="relative z-10">{link.name}</span>
+                                                </>
+                                            )}
+                                        </NavLink>
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
                     </motion.div>
                 )}
