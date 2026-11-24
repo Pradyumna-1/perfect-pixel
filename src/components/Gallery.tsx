@@ -13,7 +13,7 @@ const Gallery = () => {
     };
 
     if (loading) {
-        return <div className="py-20 text-center text-white">Loading Gallery...</div>;
+        return <div className="py-20 text-center text-ink">Loading Gallery...</div>;
     }
 
     // Helper to generate optimized Cloudinary URLs
@@ -27,12 +27,12 @@ const Gallery = () => {
     };
 
     return (
-        <section id="gallery" className="py-20 bg-primary">
+        <section id="gallery" className="py-20 bg-paper">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
                     <h2 className="text-accent font-semibold tracking-wider uppercase mb-2">Portfolio</h2>
-                    <h3 className="text-3xl md:text-4xl font-bold text-white">Captured Moments</h3>
-                    <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
+                    <h3 className="text-3xl md:text-4xl font-bold text-ink">Captured Moments</h3>
+                    <p className="text-muted mt-4 max-w-2xl mx-auto">
                         A glimpse into our photography and videography work. We make your memories timeless.
                     </p>
                 </div>
@@ -52,12 +52,12 @@ const Gallery = () => {
                                     src={getOptimizedUrl(item.url, 600)}
                                     alt={item.title || "Gallery"}
                                     loading="lazy"
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    className="keep-motion w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
                             ) : (
                                 <video
                                     src={getOptimizedUrl(item.url, 700)}
-                                    className="w-full h-full object-cover"
+                                    className="keep-motion w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                     muted
                                     loop
                                     playsInline
@@ -65,16 +65,16 @@ const Gallery = () => {
                                     preload="metadata"
                                 />
                             )}
-                            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-center">
+                            <div className="keep-motion absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-center">
                                 {item.title && (
-                                    <h3 className="text-white font-bold text-xl mb-2">{item.title}</h3>
+                                    <h3 className="!text-white font-bold text-xl mb-2">{item.title}</h3>
                                 )}
                                 {item.description && (
                                     <p className="text-gray-300 text-sm mb-4 line-clamp-3">{item.description}</p>
                                 )}
                                 <button
                                     onClick={() => setSelectedItem(item)}
-                                    className="text-accent font-semibold border border-accent px-4 py-2 rounded-full hover:bg-accent hover:text-white transition-colors"
+                                    className="keep-motion text-accent font-semibold border border-accent px-4 py-2 rounded-full hover:bg-accent hover:text-white transition-colors"
                                 >
                                     View Project
                                 </button>
@@ -105,7 +105,7 @@ const Gallery = () => {
                             onClick={() => setSelectedItem(null)}
                         >
                             <button
-                                className="absolute top-4 right-4 text-white hover:text-accent transition-colors"
+                                className="keep-motion absolute top-4 right-4 !text-white hover:!text-accent transition-colors"
                                 onClick={() => setSelectedItem(null)}
                             >
                                 <X size={32} />

@@ -1,179 +1,159 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AlertCircle, CheckCircle2, KeyRound, Mail, ShieldCheck } from 'lucide-react';
 import api from '../api';
 
+const inputClass = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20';
+
 const ForgotPassword = () => {
-    const [identifier, setIdentifier] = useState('');
-    const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+  const [identifier, setIdentifier] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showOtpForm, setShowOtpForm] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [fallbackOtp, setFallbackOtp] = useState('');
+  const navigate = useNavigate();
 
-    // OTP State
-    const [showOtpForm, setShowOtpForm] = useState(false);
-    const [phone, setPhone] = useState('');
-    const [otp, setOtp] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [fallbackOtp, setFallbackOtp] = useState('');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setMessage('');
+    setFallbackOtp('');
 
-    const navigate = useNavigate();
+    try {
+      const response = await api.post('/auth/forgot-password', { identifier });
+      setMessage(response.data.message);
+      if (response.data.method === 'otp') {
+        setShowOtpForm(true);
+        setPhone(response.data.phone);
+        if (response.data.fallbackOtp) setFallbackOtp(response.data.fallbackOtp);
+      }
+    } catch (err: unknown) {
+      const axiosError = err as { response?: { data?: { message?: string } } };
+      setError(axiosError.response?.data?.message || 'Failed to process request. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
-        setMessage('');
-        setFallbackOtp('');
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setMessage('');
 
-        try {
-            const response = await api.post('/auth/forgot-password', { identifier });
-            setMessage(response.data.message);
+    try {
+      const response = await api.post('/auth/reset-password-otp', { phone, otp, newPassword });
+      setMessage(response.data.message);
+      setTimeout(() => navigate('/login'), 2000);
+    } catch (err: unknown) {
+      const axiosError = err as { response?: { data?: { message?: string } } };
+      setError(axiosError.response?.data?.message || 'Failed to verify OTP. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            if (response.data.method === 'otp') {
-                setShowOtpForm(true);
-                setPhone(response.data.phone);
-                if (response.data.fallbackOtp) {
-                    setFallbackOtp(response.data.fallbackOtp);
-                }
-            }
-
-        } catch (err: any) {
-            if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
-            } else {
-                setError('Failed to process request. Please try again.');
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleOtpSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
-        setMessage('');
-
-        try {
-            const response = await api.post('/auth/reset-password-otp', {
-                phone,
-                otp,
-                newPassword
-            });
-            setMessage(response.data.message);
-
-            // Redirect to login after success
-            setTimeout(() => {
-                navigate('/login');
-            }, 2000);
-
-        } catch (err: any) {
-            if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
-            } else {
-                setError('Failed to verify OTP. Please try again.');
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-96">
-                <h2 className="text-2xl font-bold mb-6 text-center">
-                    {showOtpForm ? 'Enter OTP' : 'Forgot Password'}
-                </h2>
-
-                {!showOtpForm && (
-                    <p className="text-gray-400 mb-6 text-sm text-center">
-                        Enter your email for a reset link OR phone number for an OTP.
-                    </p>
-                )}
-
-                {message && (
-                    <div className="bg-green-500/10 border border-green-500 text-green-500 p-3 rounded mb-4 text-sm">
-                        {message}
-                    </div>
-                )}
-
-                {error && (
-                    <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded mb-4 text-sm">
-                        {error}
-                    </div>
-                )}
-
-                {!showOtpForm ? (
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-6">
-                            <label className="block mb-2 text-sm text-gray-300">Email or Phone</label>
-                            <input
-                                type="text"
-                                required
-                                className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-accent outline-none text-white placeholder-gray-500"
-                                placeholder="user@example.com or 1234567890"
-                                value={identifier}
-                                onChange={(e) => setIdentifier(e.target.value)}
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-accent hover:bg-accent/80 text-white font-bold py-2 px-4 rounded transition-colors disabled:opacity-50"
-                        >
-                            {loading ? 'Sending...' : 'Send Reset Link/OTP'}
-                        </button>
-                    </form>
-                ) : (
-                    <form onSubmit={handleOtpSubmit}>
-                        {fallbackOtp && (
-                            <div className="bg-yellow-500/20 border border-yellow-500/50 text-yellow-200 p-4 rounded-lg mb-6 text-sm">
-                                <p className="font-bold border-b border-yellow-500/30 pb-2 mb-2">⚠️ Email Service Delayed</p>
-                                <p>To help you finish your reset now, use this emergency code:</p>
-                                <div className="text-2xl font-mono font-bold tracking-[10px] text-center mt-3 bg-black/40 py-2 rounded">
-                                    {fallbackOtp}
-                                </div>
-                            </div>
-                        )}
-                        <div className="mb-4">
-                            <label className="block mb-2 text-sm text-gray-300">Enter OTP</label>
-                            <input
-                                type="text"
-                                required
-                                className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-accent outline-none text-white placeholder-gray-500"
-                                placeholder="Enter 6-digit OTP"
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
-                            />
-                        </div>
-                        <div className="mb-6">
-                            <label className="block mb-2 text-sm text-gray-300">New Password</label>
-                            <input
-                                type="password"
-                                required
-                                className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-accent outline-none text-white"
-                                placeholder="******"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-accent hover:bg-accent/80 text-white font-bold py-2 px-4 rounded transition-colors disabled:opacity-50"
-                        >
-                            {loading ? 'Verifying...' : 'Reset Password'}
-                        </button>
-                    </form>
-                )}
-
-                <div className="mt-6 text-center">
-                    <Link to="/login" className="text-accent hover:underline text-sm">
-                        Back to Login
-                    </Link>
+  return (
+    <div className="admin-page flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10 font-sans text-slate-900">
+      <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+        <h1 className="text-center font-display text-2xl font-semibold text-slate-900">
+          {showOtpForm ? 'Enter OTP' : 'Forgot Password'}
+        </h1>
+        <p className="mt-1 text-center text-sm text-slate-500">
+          {showOtpForm
+            ? 'Enter the code sent to your phone and choose a new password.'
+            : 'Enter your email for a reset link or phone number for an OTP.'}
+        </p>
+        {message && (
+          <div className="mt-5 flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-600" role="status">
+            <CheckCircle2 size={16} strokeWidth={2} aria-hidden="true" className="mt-0.5 shrink-0" />
+            {message}
+          </div>
+        )}
+        {error && (
+          <div className="mt-5 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-500" role="alert">
+            <AlertCircle size={16} strokeWidth={2} aria-hidden="true" className="mt-0.5 shrink-0" />
+            {error}
+          </div>
+        )}
+        {!showOtpForm ? (
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <label className="grid gap-2">
+              <span className="text-xs font-semibold text-slate-700">Email or phone</span>
+              <div className="relative">
+                <Mail size={18} strokeWidth={1.8} aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  required
+                  placeholder="user@example.com or 1234567890"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  className={`${inputClass} pl-10`}
+                />
+              </div>
+            </label>
+            <button type="submit" disabled={loading} className="w-full rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-600 disabled:opacity-50">
+              {loading ? 'Sending...' : 'Send Reset Link / OTP'}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleOtpSubmit} className="mt-6 space-y-4">
+            {fallbackOtp && (
+              <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
+                <div className="mb-2 flex items-center gap-2 border-b border-blue-200 pb-2 text-sm font-semibold text-blue-600">
+                  <ShieldCheck size={16} strokeWidth={2} aria-hidden="true" />
+                  Email service delayed
                 </div>
-            </div>
+                <p className="text-sm text-slate-600">Use this verification code to finish your reset now:</p>
+                <div className="mt-3 rounded-lg border border-dashed border-blue-400 bg-white px-3 py-2 text-center font-mono text-xl tracking-[0.3em] text-slate-900">
+                  {fallbackOtp}
+                </div>
+              </div>
+            )}
+            <label className="grid gap-2">
+              <span className="text-xs font-semibold text-slate-700">Enter OTP</span>
+              <div className="relative">
+                <ShieldCheck size={18} strokeWidth={1.8} aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  required
+                  placeholder="Enter 6-digit OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className={`${inputClass} pl-10`}
+                />
+              </div>
+            </label>
+            <label className="grid gap-2">
+              <span className="text-xs font-semibold text-slate-700">New password</span>
+              <div className="relative">
+                <KeyRound size={18} strokeWidth={1.8} aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="password"
+                  required
+                  placeholder="Enter a new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className={`${inputClass} pl-10`}
+                />
+              </div>
+            </label>
+            <button type="submit" disabled={loading} className="w-full rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-600 disabled:opacity-50">
+              {loading ? 'Verifying...' : 'Reset Password'}
+            </button>
+          </form>
+        )}
+        <div className="mt-6 text-center text-sm">
+          <Link to="/login" className="text-blue-500 hover:text-blue-600 hover:underline">Back to Login</Link>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default ForgotPassword;

@@ -13,19 +13,19 @@ const Services = () => {
             icon: <Globe size={40} />,
             title: 'Online Services',
             description: 'Apply for Government schemes, Pan Card, Aadhar updates, and more.',
-            color: 'bg-green-500'
+            color: 'bg-blue-600'
         },
         {
             icon: <Camera size={40} />,
             title: 'Wedding Photography',
             description: 'Capturing your special moments with professional equipment and lighting.',
-            color: 'bg-purple-500'
+            color: 'bg-blue-700'
         },
         {
             icon: <Video size={40} />,
             title: 'Drone Shoots',
             description: 'Cinematic 4K drone footage for weddings, events, and real estate.',
-            color: 'bg-orange-500'
+            color: 'bg-red-500'
         },
         {
             icon: <FileText size={40} />,
@@ -37,7 +37,7 @@ const Services = () => {
             icon: <CreditCard size={40} />,
             title: 'Money Transfer',
             description: 'Instant money transfer to any bank account and bill payments.',
-            color: 'bg-teal-500'
+            color: 'bg-blue-500'
         }
     ];
 

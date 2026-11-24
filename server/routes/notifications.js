@@ -82,12 +82,17 @@ function parsePublished(value, fallback = true) {
 function validateBody(req) {
   const title = String(req.body.title || "").trim();
   const description = String(req.body.description || "").trim();
-  const category = String(req.body.category || "notice");
+  const selectedCategory = String(req.body.category || "notice");
+  const customCategory = String(req.body.customCategory || "").trim().replace(/\s+/g, " ");
 
   if (!title) return { error: "Title is required" };
   if (!description) return { error: "Description is required" };
-  if (!CATEGORIES.includes(category)) return { error: "Invalid category" };
+  if (!CATEGORIES.includes(selectedCategory)) return { error: "Invalid category" };
+  if (selectedCategory === "other" && customCategory.length > 30) {
+    return { error: "Custom category must be 30 characters or fewer" };
+  }
 
+  const category = selectedCategory === "other" && customCategory ? customCategory : selectedCategory;
   return { title, description, category };
 }
 

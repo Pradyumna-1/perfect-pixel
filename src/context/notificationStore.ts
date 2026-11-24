@@ -15,6 +15,12 @@ export const CATEGORY_LABELS: Record<NotificationCategory, string> = {
     other: 'Other',
 };
 
+export const isPredefinedCategory = (value: string): value is NotificationCategory =>
+    NOTIFICATION_CATEGORIES.includes(value as NotificationCategory);
+
+export const getCategoryLabel = (category: string) =>
+    isPredefinedCategory(category) ? CATEGORY_LABELS[category] : category;
+
 export const formatDate = (value?: string | null) => {
     if (!value) return '—';
     const date = new Date(value);
@@ -31,7 +37,7 @@ export const getDownloadUrl = (url: string | null) => {
 export interface AppNotification {
     _id: string;
     title: string;
-    category: NotificationCategory;
+    category: string;
     description: string;
     deadline: string | null;
     attachmentUrl: string | null;

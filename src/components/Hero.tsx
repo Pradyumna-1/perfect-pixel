@@ -1,57 +1,44 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Clock3 } from 'lucide-react';
+import heroPhoto from '../assets/de38a848-65bb-43c1-ab3f-7ade69707a65.png';
 
 const Hero = () => {
     return (
-        <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-            {/* Background Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/80 to-primary z-10"></div>
-
-            {/* Background Image (Placeholder) */}
-            <div
-                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-                style={{
-                    backgroundImage: 'url("https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80")'
-                }}
-            ></div>
-
-            <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <section id="home" className="wp-hero">
+            <div className="wp-light" aria-hidden="true" />
+            <div className="wp-hero-inner">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    className="wp-hero-copy"
+                    initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    <h2 className="text-accent font-semibold tracking-wider uppercase mb-4">One Stop Solution</h2>
-                    <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                        Digital Services & <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-yellow-200">
-                            Creative Photography
-                        </span>
-                    </h1>
-                    <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-                        From high-quality printing and online applications to capturing your life's best moments with our drone and wedding photography.
-                    </p>
+                    <span className="wp-kicker">Perfect Pixel, Kalampur</span>
+                    <h1>Every print.<br /><span>Every moment.</span></h1>
+                    <p>Printing, online services and photography, handled with care in one calm place.</p>
+                    <div className="wp-actions">
+                        <Link to="/services" className="wp-btn wp-btn--primary">See services <ArrowRight size={18} /></Link>
+                        <Link to="/contact" className="wp-btn wp-btn--quiet">Book a visit</Link>
+                    </div>
+                    <div className="wp-hours"><Clock3 size={16} /> Open 9:00 AM – 9:00 PM, all week</div>
+                </motion.div>
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link
-                            to="/services"
-                            className="px-8 py-4 bg-accent hover:bg-accent-hover text-white rounded-full font-bold transition-all transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-accent/20"
-                        >
-                            Explore Services <ArrowRight size={20} />
-                        </Link>
-                        <Link
-                            to="/contact"
-                            className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-full font-bold transition-all backdrop-blur-sm"
-                        >
-                            Book Now
-                        </Link>
+                <motion.div
+                    className="wp-hero-visual"
+                    initial={{ opacity: 0, y: 32 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.9, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+                >
+                    <div className="wp-photo">
+                        <img src={heroPhoto} alt="Perfect Pixel storefront artwork" fetchPriority="high" />
+                    </div>
+                    <div className="wp-note">
+                        <span>At the shop</span>
+                        <strong>Printing, paperwork, photography</strong>
                     </div>
                 </motion.div>
             </div>
-
-            {/* Scroll Indicator */}
-
         </section>
     );
 };

@@ -68,11 +68,11 @@ const Navbar = () => {
                         onClick={() => handleNavClick('home')}
                         className="flex-shrink-0 flex items-center gap-2 group"
                     >
-                        <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-white font-bold transition-transform duration-300 group-hover:scale-110">
+                        <div className="w-8 h-8 rounded-lg border border-[#e11d48]/20 bg-[#1c2028] flex items-center justify-center text-[#e11d48] text-lg font-extrabold transition-transform duration-300 group-hover:scale-110">
                             P
                         </div>
-                        <span className="text-white font-bold text-xl tracking-wider">
-                            PERFECT<span className="text-accent">PIXEL</span>
+                        <span className="font-bold text-xl tracking-wider">
+                            <span className="text-[#e11d48]">P</span><span className="text-[#20242b]">ERFECT</span><span className="text-[#e11d48]">P</span><span className="text-[#2f7fd1]">IXEL</span>
                         </span>
                     </Link>
 

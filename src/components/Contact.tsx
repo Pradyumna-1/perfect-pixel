@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Phone, Mail, MapPin, Clock, CheckCircle, X } from 'lucide-react';
+import { PhoneCall, Mail, MapPinned, Clock3, CheckCircle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const contactIconClass = 'flex h-12 w-12 shrink-0 items-center justify-center bg-transparent';
+
+const contactIconColors = [
+    'text-[#8B5CF6]',
+    'text-[#2563EB]',
+    'text-[#E11D48]',
+    'text-[#0891B2]',
+];
 
 const Contact = () => {
     const [showToast, setShowToast] = useState(false);
@@ -32,9 +41,9 @@ const Contact = () => {
                         initial={{ opacity: 0, y: -50, x: '-50%' }}
                         animate={{ opacity: 1, y: 0, x: '-50%' }}
                         exit={{ opacity: 0, y: -20, x: '-50%' }}
-                        className="fixed top-6 left-1/2 z-[100] px-5 py-2 rounded-full shadow-2xl flex items-center gap-3 border border-green-500/50 bg-black/80 backdrop-blur-md text-white whitespace-nowrap"
+                        className="fixed top-6 left-1/2 z-[100] px-5 py-2 rounded-full shadow-2xl flex items-center gap-3 border border-blue-400/50 bg-black/80 text-white whitespace-nowrap"
                     >
-                        <CheckCircle size={18} className="text-green-400" />
+                        <CheckCircle size={18} className="text-blue-400" />
                         <span className="text-sm font-medium tracking-tight">Message Sent! Opening WhatsApp...</span>
                         <button onClick={() => setShowToast(false)} className="ml-1 p-0.5 hover:bg-white/10 rounded-full transition-colors text-gray-400">
                             <X size={14} />
@@ -54,8 +63,8 @@ const Contact = () => {
 
                         <div className="space-y-6">
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-accent shrink-0">
-                                    <MapPin size={24} />
+                                <div className={`${contactIconClass} ${contactIconColors[0]}`}>
+                                    <MapPinned size={26} strokeWidth={2} className="drop-shadow-[0_3px_8px_rgba(0,0,0,0.18)]" />
                                 </div>
                                 <div>
                                     <h4 className="text-white font-bold text-lg text-capitalize">Our Location</h4>
@@ -64,8 +73,8 @@ const Contact = () => {
                             </div>
 
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-accent shrink-0">
-                                    <Phone size={24} />
+                                <div className={`${contactIconClass} ${contactIconColors[1]}`}>
+                                    <PhoneCall size={26} strokeWidth={2} className="drop-shadow-[0_3px_8px_rgba(0,0,0,0.18)]" />
                                 </div>
                                 <div>
                                     <h4 className="text-white font-bold text-lg">Phone Number</h4>
@@ -75,8 +84,8 @@ const Contact = () => {
                             </div>
 
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-accent shrink-0">
-                                    <Mail size={24} />
+                                <div className={`${contactIconClass} ${contactIconColors[2]}`}>
+                                    <Mail size={26} strokeWidth={2} className="drop-shadow-[0_3px_8px_rgba(0,0,0,0.18)]" />
                                 </div>
                                 <div>
                                     <h4 className="text-white font-bold text-lg">Email Address</h4>
@@ -85,8 +94,8 @@ const Contact = () => {
                             </div>
 
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-accent shrink-0">
-                                    <Clock size={24} />
+                                <div className={`${contactIconClass} ${contactIconColors[3]}`}>
+                                    <Clock3 size={26} strokeWidth={2} className="drop-shadow-[0_3px_8px_rgba(0,0,0,0.18)]" />
                                 </div>
                                 <div>
                                     <h4 className="text-white font-bold text-lg">Working Hours</h4>

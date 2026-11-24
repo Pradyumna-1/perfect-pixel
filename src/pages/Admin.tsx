@@ -1,243 +1,338 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
+import { AlertCircle, Bell, CheckCircle2, ChevronLeft, ChevronRight, LogOut, Plus, Trash2, X } from 'lucide-react';
 import { useGallery } from '../context/GalleryContext';
 import { useAuth } from '../context/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, LogOut, Plus, AlertCircle, CheckCircle2, X, Bell } from 'lucide-react';
+
+const inputClass = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20';
+const primaryButtonClass = 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-600 disabled:opacity-50';
+const dangerButtonClass = 'inline-flex items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-600 disabled:opacity-50';
+const quietButtonClass = 'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50';
+const pageSizeClass = 'rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20';
+const pagerButtonClass = 'inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition-colors hover:border-blue-500 hover:text-blue-500 disabled:cursor-not-allowed disabled:opacity-40';
+const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
 const Admin = () => {
-    const { mediaItems, addMedia, deleteMedia } = useGallery();
-    const { logout } = useAuth();
-    const navigate = useNavigate();
+  const { mediaItems, addMedia, deleteMedia } = useGallery();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
-    const [file, setFile] = useState<File | null>(null);
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [type, setType] = useState<'image' | 'video'>('image');
-    const [loading, setLoading] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
-    const [toast, setToast] = useState<{ message: string; type: 'success' | 'alert' } | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [type, setType] = useState<'image' | 'video'>('image');
+  const [loading, setLoading] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [pageSize, setPageSize] = useState(5);
+  const [page, setPage] = useState(1);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'alert' } | null>(null);
 
-    const showToast = (message: string, type: 'success' | 'alert' = 'success') => {
-        setToast({ message, type });
-        setTimeout(() => setToast(null), 3000);
-    };
+  const showToast = (message: string, toastType: 'success' | 'alert' = 'success') => {
+    setToast({ message, type: toastType });
+    setTimeout(() => setToast(null), 3000);
+  };
 
-    const handleAdd = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!file) return;
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!file) return;
 
-        // Validate file size (85MB)
-        const MAX_SIZE = 85 * 1024 * 1024;
-        if (file.size > MAX_SIZE) {
-            showToast('File size exceeds 85MB limit.', 'alert');
-            return;
-        }
+    const maxSize = 85 * 1024 * 1024;
+    if (file.size > maxSize) {
+      showToast('File size exceeds 85MB limit.', 'alert');
+      return;
+    }
 
-        setLoading(true);
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('type', type);
-        formData.append('title', title);
-        formData.append('description', description);
+    setLoading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+    formData.append('title', title);
+    formData.append('description', description);
 
-        try {
-            await addMedia(formData);
-            setFile(null);
-            setTitle('');
-            setDescription('');
-            showToast('Media uploaded successfully!');
-        } catch {
-            showToast('Failed to add media', 'alert');
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+      await addMedia(formData);
+      setFile(null);
+      setTitle('');
+      setDescription('');
+      setPage(1);
+      showToast('Media uploaded successfully!');
+    } catch {
+      showToast('Failed to add media', 'alert');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const confirmDelete = async () => {
-        if (!itemToDelete) return;
-        setLoading(true);
-        try {
-            await deleteMedia(itemToDelete);
-            showToast('Item deleted successfully!');
-        } catch {
-            showToast('Failed to delete media', 'alert');
-        } finally {
-            setLoading(false);
-            setItemToDelete(null);
-        }
-    };
+  const confirmDelete = async () => {
+    if (!itemToDelete) return;
+    setLoading(true);
+    try {
+      await deleteMedia(itemToDelete);
+      showToast('Item deleted successfully!');
+    } catch {
+      showToast('Failed to delete media', 'alert');
+    } finally {
+      setLoading(false);
+      setItemToDelete(null);
+    }
+  };
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
-    return (
-        <div className="min-h-screen bg-gray-900 text-white p-8">
-            <div className="max-w-6xl mx-auto">
-                <div className="flex flex-wrap gap-4 justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                    <div className="flex items-center gap-3">
-                        <Link
-                            to="/admin/notifications"
-                            className="flex items-center gap-2 bg-accent hover:bg-accent/80 px-4 py-2 rounded transition-colors font-semibold"
-                        >
-                            <Bell size={20} /> Manage Notifications
-                        </Link>
-                        <button
-                            onClick={handleLogout}
-                            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors"
-                        >
-                            <LogOut size={20} /> Logout
-                        </button>
-                    </div>
-                </div>
+  const mediaList = Array.isArray(mediaItems) ? mediaItems : [];
+  const totalPages = Math.max(1, Math.ceil(mediaList.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const startIndex = (currentPage - 1) * pageSize;
+  const pagedMedia = mediaList.slice(startIndex, startIndex + pageSize);
+  const showingFrom = mediaList.length === 0 ? 0 : startIndex + 1;
+  const showingTo = Math.min(startIndex + pageSize, mediaList.length);
 
-                {/* Add Media Form */}
-                <div className="bg-gray-800 p-6 rounded-xl mb-8">
-                    <h2 className="text-xl font-semibold mb-4">Add New Media</h2>
-                    <form onSubmit={handleAdd} className="flex flex-col gap-4">
-                        <div className="flex flex-col md:flex-row gap-4">
-                            <select
-                                value={type}
-                                onChange={(e) => setType(e.target.value as 'image' | 'video')}
-                                className="bg-gray-700 border border-gray-600 rounded p-2 outline-none focus:border-accent"
-                            >
-                                <option value="image">Image</option>
-                                <option value="video">Video</option>
-                            </select>
-                            <input
-                                type="file"
-                                accept={type === 'image' ? 'image/*' : 'video/*'}
-                                onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
-                                className="flex-1 bg-gray-700 border border-gray-600 rounded p-2 outline-none focus:border-accent text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent file:text-white hover:file:bg-accent/80"
-                            />
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Title (Optional)"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="w-full bg-gray-700 border border-gray-600 rounded p-2 outline-none focus:border-accent"
-                        />
-                        <textarea
-                            placeholder="Description (Optional)"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            className="w-full bg-gray-700 border border-gray-600 rounded p-2 outline-none focus:border-accent h-24 resize-none"
-                        />
-                        <button
-                            type="submit"
-                            disabled={loading || !file}
-                            className="bg-accent hover:bg-accent/80 px-6 py-2 rounded font-bold flex items-center gap-2 justify-center disabled:opacity-50 self-start"
-                        >
-                            <Plus size={20} /> {loading ? 'Uploading...' : 'Upload Media'}
-                        </button>
-                    </form>
-                </div>
+  const goToPage = (next: number) => {
+    setPage(Math.min(Math.max(next, 1), totalPages));
+  };
 
-                {/* Media List */}
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {Array.isArray(mediaItems) && mediaItems.map((item) => (
-                        <div key={item._id} className="relative group bg-gray-800 rounded-lg overflow-hidden">
-                            <div className="aspect-video">
-                                {item.type === 'image' ? (
-                                    <img src={item.url} alt={item.title || "Gallery"} className="w-full h-full object-cover" />
-                                ) : (
-                                    <video src={item.url} className="w-full h-full object-cover" controls />
-                                )}
-                            </div>
-                            <div className="p-4 flex flex-col gap-2">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="font-bold text-white truncate">{item.title || 'Untitled'}</h3>
-                                        <p className="text-xs text-gray-400 capitalize">{item.type}</p>
-                                    </div>
-                                    <button
-                                        onClick={() => setItemToDelete(item._id)}
-                                        className="text-red-500 hover:text-red-400 p-2 rounded-full hover:bg-red-500/10 transition-colors"
-                                    >
-                                        <Trash2 size={20} />
-                                    </button>
-                                </div>
-                                {item.description && (
-                                    <p className="text-sm text-gray-400 line-clamp-2">{item.description}</p>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
+  return (
+    <div className="admin-page min-h-screen bg-slate-50 font-sans text-slate-900">
+      <div className="mx-auto w-full max-w-6xl space-y-6 p-6 md:p-8">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="font-display text-2xl font-semibold tracking-tight text-slate-900">Admin Dashboard</h1>
+            <p className="mt-1 text-sm text-slate-500">Upload gallery media and manage site notifications.</p>
+          </div>
+          <div className="flex flex-wrap gap-2 sm:justify-end">
+            <Link to="/admin/notifications" className={primaryButtonClass}>
+              <Bell size={18} strokeWidth={2} aria-hidden="true" />
+              Manage Notifications
+            </Link>
+            <button type="button" onClick={handleLogout} className={dangerButtonClass}>
+              <LogOut size={18} strokeWidth={2} aria-hidden="true" />
+              Logout
+            </button>
+          </div>
+        </header>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="mb-5">
+            <h2 className="font-display text-xl font-semibold text-slate-900">Add New Media</h2>
+            <p className="mt-1 text-sm text-slate-500">Images and videos are shown in the public gallery.</p>
+          </div>
+          <form onSubmit={handleAdd} className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="grid gap-2">
+                <span className="text-xs font-semibold text-slate-700">Media type</span>
+                <select
+                  value={type}
+                  onChange={(e) => setType(e.target.value as 'image' | 'video')}
+                  className={inputClass}
+                >
+                  <option value="image">Image</option>
+                  <option value="video">Video</option>
+                </select>
+              </label>
+              <label className="grid gap-2">
+                <span className="text-xs font-semibold text-slate-700">File</span>
+                <input
+                  type="file"
+                  accept={type === 'image' ? 'image/*' : 'video/*'}
+                  onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
+                  className={`${inputClass} file:mr-3 file:rounded-full file:border-0 file:bg-blue-500 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-blue-600`}
+                />
+              </label>
             </div>
+            <label className="grid gap-2">
+              <span className="text-xs font-semibold text-slate-700">Title</span>
+              <input
+                type="text"
+                placeholder="Title (Optional)"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className={inputClass}
+              />
+            </label>
+            <label className="grid gap-2">
+              <span className="text-xs font-semibold text-slate-700">Description</span>
+              <textarea
+                placeholder="Description (Optional)"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                className={`${inputClass} min-h-28 resize-y`}
+              />
+            </label>
+            <div className="flex justify-start">
+              <button type="submit" disabled={loading || !file} className={primaryButtonClass}>
+                <Plus size={18} strokeWidth={2} aria-hidden="true" />
+                {loading ? 'Uploading...' : 'Upload Media'}
+              </button>
+            </div>
+          </form>
+        </section>
 
-            {/* Confirmation Modal */}
-            <AnimatePresence>
-                {itemToDelete && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-                            onClick={() => setItemToDelete(null)}
-                        />
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="relative bg-gray-800 border border-gray-700 p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center"
-                        >
-                            <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <AlertCircle size={32} />
-                            </div>
-                            <h3 className="text-xl font-bold mb-2">Delete Item?</h3>
-                            <p className="text-gray-400 mb-8">This action cannot be undone. Are you sure you want to delete this item?</p>
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={() => setItemToDelete(null)}
-                                    className="flex-1 px-4 py-2 rounded-lg border border-gray-600 hover:bg-gray-700 transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={confirmDelete}
-                                    disabled={loading}
-                                    className="flex-1 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition-colors font-bold disabled:opacity-50"
-                                >
-                                    {loading ? 'Deleting...' : 'Delete'}
-                                </button>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
-
-            {/* Slim Minimalist Toaster */}
-            <AnimatePresence>
-                {toast && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -50, x: '-50%' }}
-                        animate={{ opacity: 1, y: 0, x: '-50%' }}
-                        exit={{ opacity: 0, y: -20, x: '-50%' }}
-                        className={`fixed top-6 left-1/2 z-[200] px-5 py-2 rounded-full shadow-2xl flex items-center gap-3 border backdrop-blur-md ${toast.type === 'success'
-                            ? 'bg-black/80 border-green-500/50 text-white'
-                            : 'bg-black/80 border-red-500/50 text-white'
-                            }`}
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="font-display text-xl font-semibold text-slate-900">Gallery Media</h2>
+              <p className="mt-1 text-sm text-slate-500">Currently published gallery items.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <label htmlFor="admin-gallery-page-size" className="text-xs font-semibold text-slate-700">
+                No. per page
+              </label>
+              <select
+                id="admin-gallery-page-size"
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setPage(1);
+                }}
+                className={pageSizeClass}
+              >
+                {PAGE_SIZE_OPTIONS.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+                Showing {showingFrom}–{showingTo} of {mediaList.length}
+              </span>
+            </div>
+          </div>
+          {mediaList.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center text-sm text-slate-500">
+              No media yet. Upload an image or video above.
+            </div>
+          ) : (
+            <div className="grid gap-3">
+              {pagedMedia.map((item) => (
+                <article key={item._id} className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center">
+                  <div className="h-20 w-32 shrink-0 overflow-hidden rounded-lg bg-slate-100">
+                    {item.type === 'image' ? (
+                      <img src={item.url} alt={item.title || 'Gallery'} className="h-full w-full object-cover" />
+                    ) : (
+                      <video src={item.url} controls className="h-full w-full object-cover" aria-label={item.title || 'Gallery video'} />
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate text-sm font-semibold text-slate-900">{item.title || 'Untitled'}</h3>
+                    <span className="mt-2 inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                      {item.type}
+                    </span>
+                    {item.description && <p className="mt-2 text-sm text-slate-500">{item.description}</p>}
+                  </div>
+                  <div className="flex shrink-0 justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setItemToDelete(item._id)}
+                      aria-label={`Delete ${item.title || 'media'}`}
+                      className="inline-grid h-9 w-9 place-items-center rounded-lg border border-red-200 bg-red-50 text-red-500 transition-colors hover:bg-red-100"
                     >
-                        {toast.type === 'success' ? (
-                            <CheckCircle2 size={18} className="text-green-400" />
-                        ) : (
-                            <AlertCircle size={18} className="text-red-400" />
-                        )}
-                        <span className="text-sm font-medium tracking-tight whitespace-nowrap">{toast.message}</span>
-                        <button onClick={() => setToast(null)} className="ml-1 p-0.5 hover:bg-white/10 rounded-full transition-colors text-gray-400">
-                            <X size={14} />
-                        </button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </div>
-    );
+                      <Trash2 size={16} strokeWidth={2} aria-hidden="true" />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+          {mediaList.length > 0 && (
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4">
+              <p className="text-sm text-slate-500">
+                Page {currentPage} of {totalPages}
+              </p>
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => goToPage(1)} disabled={currentPage === 1} className={pagerButtonClass}>
+                  First
+                </button>
+                <button
+                  type="button"
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  aria-label="Previous page"
+                  className={`${pagerButtonClass} w-9 px-0`}
+                >
+                  <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" />
+                </button>
+                <span className="min-w-8 text-center text-sm font-semibold text-slate-900">{currentPage}</span>
+                <button
+                  type="button"
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  aria-label="Next page"
+                  className={`${pagerButtonClass} w-9 px-0`}
+                >
+                  <ChevronRight size={18} strokeWidth={2} aria-hidden="true" />
+                </button>
+                <button type="button" onClick={() => goToPage(totalPages)} disabled={currentPage === totalPages} className={pagerButtonClass}>
+                  Last
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+
+      <AnimatePresence>
+        {itemToDelete && (
+          <motion.div
+            className="fixed inset-0 z-[100] grid place-items-center bg-slate-900/60 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setItemToDelete(null)}
+          >
+            <motion.div
+              className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xl"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="delete-media-title"
+              initial={{ opacity: 0, y: 16, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.96 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-red-50 text-red-500">
+                <AlertCircle size={32} strokeWidth={1.8} aria-hidden="true" />
+              </div>
+              <h2 id="delete-media-title" className="font-display text-xl font-semibold text-slate-900">Delete item?</h2>
+              <p className="mt-2 text-sm text-slate-500">This action cannot be undone. The media will be removed from the gallery.</p>
+              <div className="mt-6 flex gap-3">
+                <button type="button" onClick={() => setItemToDelete(null)} className={`${quietButtonClass} flex-1`}>
+                  Cancel
+                </button>
+                <button type="button" onClick={confirmDelete} disabled={loading} className={`${dangerButtonClass} flex-1`}>
+                  {loading ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            className={`fixed left-1/2 top-6 z-[200] flex items-center gap-3 rounded-full border px-5 py-2 text-sm text-white shadow-xl ${toast.type === 'alert' ? 'border-red-500/50 bg-slate-900' : 'border-blue-500/50 bg-slate-900'}`}
+            role="status"
+            initial={{ opacity: 0, x: '-50%', y: -12 }}
+            animate={{ opacity: 1, x: '-50%', y: 0 }}
+            exit={{ opacity: 0, x: '-50%', y: -8 }}
+          >
+            {toast.type === 'alert' ? (
+              <AlertCircle size={18} strokeWidth={2} aria-hidden="true" className="text-red-400" />
+            ) : (
+              <CheckCircle2 size={18} strokeWidth={2} aria-hidden="true" className="text-blue-400" />
+            )}
+            <span className="font-medium">{toast.message}</span>
+            <button type="button" onClick={() => setToast(null)} aria-label="Dismiss notification" className="rounded-full p-0.5 text-slate-400 hover:bg-white/10">
+              <X size={14} strokeWidth={2} aria-hidden="true" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 };
 
 export default Admin;

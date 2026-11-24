@@ -1,9 +1,417 @@
+@import url("./tokens.css");
+@import url("./base.css");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply bg-primary text-white;
+:root {
+  --wp-hero-min: 760px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+nav.fixed.top-0 {
+  background: color-mix(in oklab, var(--color-light) 88%, transparent) !important;
+  border-bottom: 1px solid var(--color-rule) !important;
+  box-shadow: 0 10px 30px -24px var(--color-shade-2);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+nav.fixed.top-0 :is(.text-white, .text-gray-300, .text-gray-400) {
+  color: var(--color-ink) !important;
+}
+
+nav.fixed.top-0 .bg-accent {
+  background: var(--color-accent) !important;
+  color: var(--color-accent-ink) !important;
+}
+
+#home,
+#services,
+#notifications,
+#contact,
+footer {
+  color: var(--color-ink);
+  background: var(--color-paper);
+}
+
+#home .text-white,
+#services .text-white,
+#contact .text-white,
+footer .text-white {
+  color: var(--color-ink) !important;
+}
+
+#home .text-gray-300,
+#services .text-gray-300,
+#notifications .text-gray-300,
+#contact .text-gray-300,
+footer .text-gray-300,
+#home .text-gray-400,
+#services .text-gray-400,
+#notifications .text-gray-400,
+#contact .text-gray-400,
+footer .text-gray-400,
+#home .text-gray-500,
+#services .text-gray-500,
+#notifications .text-gray-500,
+#contact .text-gray-500,
+footer .text-gray-500 {
+  color: var(--color-muted) !important;
+}
+
+#services .text-accent,
+#notifications .text-accent,
+#contact .text-accent,
+footer .text-accent {
+  color: var(--color-accent) !important;
+}
+
+#services .bg-accent,
+#contact .bg-accent {
+  background: var(--color-accent) !important;
+  color: var(--color-accent-ink) !important;
+}
+
+.wp-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: max(100svh, var(--wp-hero-min));
+  padding: 136px 0 96px;
+  overflow: hidden;
+  background: var(--color-paper);
+}
+
+.wp-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 22% 20%, color-mix(in oklab, var(--color-shade) 32%, transparent), transparent 30%);
+}
+
+.wp-light {
+  position: absolute;
+  inset: -10%;
+  pointer-events: none;
+  opacity: 0.8;
+  background-image:
+    radial-gradient(ellipse at 75% 30%, color-mix(in oklab, var(--color-light) 96%, transparent) 0 6%, transparent 7%),
+    repeating-radial-gradient(ellipse at 78% 34%, transparent 0 22px, color-mix(in oklab, var(--color-shade) 34%, transparent) 23px 25px, transparent 26px 48px),
+    linear-gradient(118deg, transparent 52%, color-mix(in oklab, var(--spec-2) 26%, transparent) 58%, transparent 64%);
+  -webkit-mask-image: linear-gradient(to right, transparent 26%, #000 68%);
+  mask-image: linear-gradient(to right, transparent 26%, #000 68%);
+}
+
+.wp-hero-inner {
+  position: relative;
+  z-index: 2;
+  width: min(calc(100% - (var(--gutter) * 2)), var(--container));
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(40px, 5vw, 88px);
+  align-items: center;
+}
+
+.wp-kicker {
+  display: inline-block;
+  margin-bottom: 24px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-accent);
+}
+
+.wp-hero h1 {
+  max-width: 11ch;
+  font-size: clamp(3.2rem, 6.2vw, 6.2rem);
+  font-weight: 300;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.wp-hero h1 span {
+  color: var(--color-accent);
+}
+
+.wp-hero-copy > p {
+  max-width: 48ch;
+  margin-top: 28px;
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--color-ink-2);
+}
+
+.wp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.wp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 0 28px;
+  border-radius: var(--radius-pill);
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+}
+
+.wp-btn:hover {
+  transform: translateY(-2px);
+}
+
+.wp-btn--primary {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  box-shadow: var(--shadow-card);
+}
+
+.wp-btn--primary:hover {
+  background: var(--color-accent-hi);
+}
+
+.wp-btn--quiet {
+  border: 1px solid var(--color-rule);
+  background: color-mix(in oklab, var(--color-light) 82%, transparent);
+  color: var(--color-ink);
+  box-shadow: var(--edge-light);
+}
+
+.wp-hours {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 26px;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.wp-hero-visual {
+  position: relative;
+  min-width: 0;
+}
+
+.wp-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-slot);
+  box-shadow: var(--shadow-cast);
+  transform: rotate(-1.2deg);
+}
+
+.wp-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.04) brightness(1.04) saturate(0.92);
+}
+
+.wp-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(125deg, color-mix(in oklab, var(--color-light) 26%, transparent), transparent 42%);
+}
+
+.wp-note {
+  position: absolute;
+  left: -30px;
+  bottom: 54px;
+  width: min(300px, 74%);
+  padding: 22px 24px;
+  border: 1px solid color-mix(in oklab, var(--color-accent) 22%, var(--color-rule));
+  border-radius: 18px;
+  background: color-mix(in oklab, var(--color-light) 90%, transparent);
+  box-shadow: var(--shadow-card);
+}
+
+.wp-note span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.wp-note strong {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--color-ink);
+}
+
+#services,
+#notifications,
+#contact {
+  background: var(--color-paper-2) !important;
+}
+
+#services .text-center > h2,
+#notifications .text-center > h2,
+#contact h2 {
+  font-size: clamp(2.25rem, 3.4vw, 3.6rem);
+  font-weight: 400;
+}
+
+#services [class~="bg-primary/50"] {
+  background: color-mix(in oklab, var(--color-light) 90%, transparent) !important;
+}
+
+#services [class~="border-white/5"] {
+  border: 1px solid var(--color-rule) !important;
+}
+
+#services .grid > div {
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+}
+
+#services .grid > div:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-cast);
+}
+
+#services .grid > div > div:first-child {
+  background: var(--color-accent-soft) !important;
+  color: var(--color-accent) !important;
+  border-radius: var(--radius-inner) !important;
+}
+
+#services .grid > div .w-20.h-1 {
+  background: linear-gradient(90deg, var(--color-accent), color-mix(in oklab, var(--color-accent) 0%, transparent)) !important;
+}
+
+#contact .bg-primary.rounded-2xl {
+  background: color-mix(in oklab, var(--color-light) 94%, transparent) !important;
+  border: 1px solid var(--color-rule) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+#contact input,
+#contact textarea {
+  background: var(--color-paper) !important;
+  border: 1px solid var(--color-rule) !important;
+  border-radius: var(--radius-inner) !important;
+  color: var(--color-ink) !important;
+}
+
+#contact input:focus,
+#contact textarea:focus {
+  border-color: var(--color-focus) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-focus) 18%, transparent);
+}
+
+#contact [class~="bg-primary"]:not(.rounded-2xl) {
+  background: var(--color-accent-soft) !important;
+  color: var(--color-accent) !important;
+}
+
+footer {
+  background: var(--color-paper-2) !important;
+  border-top: 1px solid var(--color-rule) !important;
+}
+
+footer [class~="bg-secondary"] {
+  background: var(--color-paper-3) !important;
+  color: var(--color-ink-2) !important;
+}
+
+footer a:hover {
+  color: var(--color-accent) !important;
+}
+
+.min-h-screen:not(.admin-page) {
+  background: var(--color-paper) !important;
+  color: var(--color-ink) !important;
+}
+
+.min-h-screen:not(.admin-page) :is(h1, h2, h3, h4, .text-white):not(#gallery *):not(#notifications *) {
+  color: var(--color-ink) !important;
+}
+
+.min-h-screen:not(.admin-page) :is(.text-gray-300, .text-gray-400, .text-gray-500, .text-gray-600):not(#gallery *) {
+  color: var(--color-muted) !important;
+}
+
+.min-h-screen:not(.admin-page) :is([class~="bg-secondary"], [class~="bg-secondary/40"], [class~="bg-secondary/60"], [class~="bg-gray-800"], [class~="bg-gray-900"], [class~="bg-primary/50"]) {
+  background: var(--color-paper-2) !important;
+}
+
+.min-h-screen:not(.admin-page) :is([class~="border-white/10"], [class~="border-white/5"]) {
+  border-color: var(--color-rule) !important;
+}
+
+@media (max-width: 62rem) {
+  .wp-hero-inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 56px;
+  }
+
+  .wp-hero h1 {
+    max-width: 14ch;
+  }
+
+  .wp-photo {
+    aspect-ratio: 16 / 11;
+  }
+
+  .wp-note {
+    left: 20px;
+    bottom: -28px;
+  }
+}
+
+@media (max-width: 40rem) {
+  .wp-hero {
+    padding: 112px 0 88px;
+  }
+
+  .wp-hero-inner {
+    width: min(calc(100% - 32px), var(--container));
+  }
+
+  .wp-hero h1 {
+    font-size: clamp(2.8rem, 12vw, 4.2rem);
+  }
+
+  .wp-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .wp-btn {
+    width: 100%;
+  }
+
+  .wp-note {
+    position: static;
+    width: calc(100% - 32px);
+    margin: -40px auto 0;
   }
 }
