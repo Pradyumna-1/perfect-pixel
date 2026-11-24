@@ -7,11 +7,6 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// 
-// Health check — ping this from a free uptime monitor to stop Render's
-// free tier from putting the server to sleep after 15 min of no traffic
-app.get('/api/health', (req, res) => res.json({ ok: true }));
-// 
 import authRoutes from './routes/auth.js';
 import galleryRoutes from './routes/gallery.js';
 import notificationRoutes, { ensureNotificationSchema } from './routes/notifications.js';
@@ -20,6 +15,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// Health check — ping this from a free uptime monitor to stop Render's
+// free tier from putting the server to sleep after 15 min of no traffic
+app.get('/api/health', (req, res) => res.json({ ok: true }));
+
 const PORT = process.env.PORT || 10000;
 
 // Middleware
