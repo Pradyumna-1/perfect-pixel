@@ -1,16 +1,16 @@
-
 services:
   - type: web
-    name: perfect-pixel
+    name: perfect-pixel-api
     env: node
     plan: free
-    buildCommand: npm install && cd server && npm install && cd .. && npm run build
-    startCommand: node server/index.js
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
-      - key: MONGODB_URI
-        fromConfigVar: mongodb-uri # Or set manually in dashboard
+      - key: DATABASE_URL
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: PORT

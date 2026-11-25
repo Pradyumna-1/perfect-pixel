@@ -7,9 +7,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+node_modules/
+client/node_modules/
+server/node_modules/
+dist/
+client/dist/
+dist-ssr/
 *.local
 
 # Editor directories and files
@@ -25,7 +28,12 @@ dist-ssr
 
 # Environment Variables
 .env
+client/.env
 server/.env
+
 # Leaked credentials - never track these
 firebase-service.json
 server/firebase-service.json
+
+# Personal files
+Tailored_Resume.md

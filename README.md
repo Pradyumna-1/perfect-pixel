@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+# Perfect Pixel
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Website and admin backend for Perfect Pixel, a computer and photography service.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Frontend: React 19, TypeScript, Vite, Tailwind CSS
+- Backend: Express 5, PostgreSQL (`pg`), Cloudinary, Resend
+- Hosting: Vercel (frontend), Render (API)
 
-## React Compiler
+## Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+.
+├── .github/workflows/        # CI/workflow automation
+├── client/                   # Frontend app (Vite + React)
+│   ├── public/               # Static files
+│   └── src/
+│       ├── assets/           # Bundled images
+│       ├── components/       # Reusable UI components
+│       ├── layouts/          # App/layout shells
+│       ├── pages/            # Route-level views
+│       ├── services/         # API client and external calls
+│       ├── stores/           # Context providers and hooks
+│       └── styles/           # Design tokens, base, app styles
+├── server/                   # Backend app (Express)
+│   ├── scripts/              # DB init / admin maintenance scripts
+│   ├── sql/                  # SQL schema
+│   └── src/
+│       ├── config/           # DB/Cloudinary config
+│       └── routes/           # API routes
+├── docs/                     # Project documentation
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Requires Node.js and PostgreSQL.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm --prefix client install
+npm --prefix server install
+cp client/.env.example client/.env
+cp server/.env.example server/.env
+npm --prefix server run db:init
+npm run dev
 ```
+
+Fill in both env files before starting. Frontend: `http://localhost:5174`, API: `http://localhost:10000`.
+
+## Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Run client and server together |
+| `npm run dev:client` | Run only frontend |
+| `npm run dev:server` | Run only API |
+| `npm run build` | Build frontend |
+| `npm run typecheck` | Type-check frontend |
+| `npm run lint` | Lint frontend |
+| `npm start` | Start API (`server/src/index.js`) |
+| `npm --prefix server run db:init` | Create tables and seed admin user |
+
+## Deployment
+
+See [docs/deployment.md](docs/deployment.md).
